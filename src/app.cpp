@@ -1,6 +1,7 @@
+#include <iostream>
 #include "app.h"
 #include "log.h"
-#include <iostream>
+#include "graphics.h"
 #include "SDL2/SDL.h"
 
 App::App()
@@ -17,26 +18,12 @@ void App::Setup()
 {
 	std::cout << "App:Setup had called ..." << std::endl;
 	isRunning = true;
-
-	if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
-		Log::Error(SDL_GetError());
-	}
-
-	window = SDL_CreateWindow("Physics 2D", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1000, 1000, 0);
-	if (!window){
-		Log::Error("cant init window");
-	}
-	renderer = SDL_CreateRenderer(window, -1, 0);
-	if (!renderer){
-		Log::Error("cant init renderer");
-	}
+	graphics.OpenWindow();
+	backgroundColor = 0xFF0F0721; // tim
+	drawColow = 0xFF00FF00; // xanh
 }
 
 void App::ProcessInput()
-{
-}
-
-void App::Update()
 {
 	SDL_Event event;
 	while(SDL_PollEvent(&event)){
@@ -61,14 +48,29 @@ void App::Update()
 	}
 }
 
+void App::Update()
+{
+	graphics.ClearScreen(backgroundColor);
+}
+
 void App::Render()
 {
+	graphics.DrawLine(100, 100, 300, 500, drawColow);
+	graphics.DrawCircle(500, 500, 100, drawColow);
+
+	std::vector<Vec2> vertices;
+	vertices.push_back(Vec2(200, 200));
+	vertices.push_back(Vec2(210, 410));
+	vertices.push_back(Vec2(420, 430));
+	vertices.push_back(Vec2(400, 200));
+	graphics.DrawPolygon(vertices, drawColow);
+
+	graphics.Render();
 }
 
 void App::Destroy()
 {
-	SDL_DestroyWindow(window);
-	SDL_Quit();
+	graphics.CloseWindow();
 }
 
 bool App::IsRunning()

@@ -1,11 +1,15 @@
 #pragma once
+
 #include "SDL2/SDL.h"
+#include "graphics.h"
 
 class App {
 	private:
-		bool isRunning;
-		SDL_Window* window;
-		SDL_Renderer* renderer;
+		bool isRunning = false;
+		Graphics graphics;
+		Uint32 backgroundColor;
+		Uint32 drawColow;
+
 	public:
 		App();
 		~App();
