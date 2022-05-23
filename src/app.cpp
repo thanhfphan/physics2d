@@ -3,6 +3,9 @@
 #include "log.h"
 #include "graphics.h"
 #include "SDL2/SDL.h"
+#include "shape.h"
+#include "body.h"
+#include "collision.h"
 
 App::App()
 {
@@ -20,13 +23,20 @@ void App::Setup()
 	isRunning = true;
 	graphics.OpenWindow();
 	backgroundColor = 0xFF0F0721; // tim
-	drawColow = 0xFF00FF00; // xanh
+	drawColor = 0xFF00FF00;		  // xanh
+	collisionColor = 0xFF0000FF;  // do
+
+	Body *bCircle = new Body();
+	bCircle->position = Vec2(600, 350);
+	bCircle->shape = new Circle(150);
+	bodies.push_back(bCircle);
 }
 
 void App::ProcessInput()
 {
 	SDL_Event event;
-	while(SDL_PollEvent(&event)){
+	while (SDL_PollEvent(&event))
+	{
 		switch (event.type)
 		{
 		case SDL_QUIT:
@@ -38,7 +48,7 @@ void App::ProcessInput()
 			case SDL_SCANCODE_ESCAPE:
 				isRunning = false;
 				break;
-			
+
 			default:
 				break;
 			}
@@ -55,15 +65,29 @@ void App::Update()
 
 void App::Render()
 {
-	graphics.DrawLine(100, 100, 300, 500, drawColow);
-	graphics.DrawCircle(500, 500, 100, drawColow);
+	int mouseX, mouseY;
+	SDL_GetMouseState(&mouseX, &mouseY);
+	Body *bCircle = new Body();
+	bCircle->position = Vec2(mouseX, mouseY);
+	bCircle->shape = new Circle(50);
 
-	std::vector<Vec2> vertices;
-	vertices.push_back(Vec2(200, 200));
-	vertices.push_back(Vec2(210, 410));
-	vertices.push_back(Vec2(420, 430));
-	vertices.push_back(Vec2(400, 200));
-	graphics.DrawPolygon(vertices, drawColow);
+	for (Body *body : bodies)
+	{
+		if (body->shape->GetType() == "circle")
+		{
+			Circle *bC = (Circle *)body->shape;
+			if (CircleToCircle(bCircle, body))
+			{
+				graphics.DrawCircle(body->position.x, body->position.y, bC->radius, collisionColor);
+				graphics.DrawCircle(bCircle->position.x, bCircle->position.y, 50, collisionColor);
+			}
+			else
+			{
+				graphics.DrawCircle(body->position.x, body->position.y, bC->radius, drawColor);
+				graphics.DrawCircle(bCircle->position.x, bCircle->position.y, 50, drawColor);
+			}
+		}
+	}
 
 	graphics.Render();
 }

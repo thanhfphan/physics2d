@@ -16,7 +16,7 @@ void Graphics::OpenWindow()
 	SDL_GetCurrentDisplayMode(0, &displayMode);
 	windowHeight = displayMode.h;
 	windowWidth = displayMode.w;
-	window = SDL_CreateWindow("Physics 2D", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, windowWidth, windowHeight, 0);
+	window = SDL_CreateWindow("2D Physics Engine", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, windowWidth, windowHeight, 0);
 	if (!window)
 	{
 		Log::Error("cant init window");

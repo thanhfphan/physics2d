@@ -1,2 +1,3 @@
 # physics2d
-A small physics engine
+
+A small 2D physics engine

@@ -3,7 +3,7 @@ LANG_STD= -std=c++11
 COMPILER_FLAGS = -Wall
 SRC_FILES = *.cpp
 INCLUDE_PATH = -I/opt/homebrew/include
-LINKER_FLAGS = -L/opt/homebrew/lib -lSDL2 -lSDL2_gfx
+LINKER_FLAGS = -L/opt/homebrew/lib -lSDL2 -lSDL2_gfx -lm
 OBJ_NAME = main.out
 
 build:
