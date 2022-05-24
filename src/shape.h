@@ -1,6 +1,8 @@
 #pragma once
 
+#include <vector>
 #include "string"
+#include "vec2.h"
 
 struct Shape
 {
@@ -26,8 +28,11 @@ struct Circle : public Shape
 
 struct Polygon : public Shape
 {
-	Polygon();
-	~Polygon();
+	std::vector<Vec2> vertices;
+	Polygon(std::vector<Vec2> vertices){
+		this->vertices = vertices;
+	}
+	~Polygon(){}
 	std::string GetType()
 	{
 		return "polygon";

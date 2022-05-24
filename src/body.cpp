@@ -6,6 +6,7 @@ Body::Body()
 	Log::Info("body constructor has called");
 	this->totalForce = Vec2();
 	this->position = Vec2();
+	this->velocity = Vec2();
 	this->shape = NULL;
 }
 
@@ -22,4 +23,9 @@ void Body::AddForce(Vec2 &force)
 void Body::ClearForce()
 {
 	this->totalForce = Vec2();
+}
+
+void Body::Movement(const float dt)
+{
+	this->position += this->velocity*dt;
 }

@@ -12,6 +12,8 @@ private:
 	Uint32 backgroundColor;
 	Uint32 drawColor;
 	Uint32 collisionColor;
+	static const int FRAME_PER_SECOND = 60;
+	static const int TIME_PER_FRAME = 1000 / FRAME_PER_SECOND;
 
 public:
 	std::vector<Body *> bodies;

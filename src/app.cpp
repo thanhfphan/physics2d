@@ -26,10 +26,14 @@ void App::Setup()
 	drawColor = 0xFF00FF00;		  // xanh
 	collisionColor = 0xFF0000FF;  // do
 
-	Body *bCircle = new Body();
-	bCircle->position = Vec2(600, 350);
-	bCircle->shape = new Circle(150);
-	bodies.push_back(bCircle);
+	Body *floor = new Body();
+	std::vector<Vec2> floorVerticies;
+	floorVerticies.push_back(Vec2(30, graphics.Height() - 150));
+	floorVerticies.push_back(Vec2(30, graphics.Height() - 100));
+	floorVerticies.push_back(Vec2(graphics.Width() - 30, graphics.Height() - 100));
+	floorVerticies.push_back(Vec2(graphics.Width() - 30, graphics.Height() - 150));
+	floor->shape = new Polygon(floorVerticies);
+	bodies.push_back(floor);
 }
 
 void App::ProcessInput()
@@ -43,15 +47,22 @@ void App::ProcessInput()
 			isRunning = false;
 			break;
 		case SDL_KEYDOWN:
-			switch (event.key.keysym.scancode)
+			if (event.key.keysym.scancode == SDL_SCANCODE_ESCAPE)
 			{
-			case SDL_SCANCODE_ESCAPE:
 				isRunning = false;
-				break;
-
-			default:
-				break;
 			}
+			break;
+		case SDL_MOUSEBUTTONUP:
+		{
+			int mouseX, mouseY;
+			SDL_GetMouseState(&mouseX, &mouseY);
+			Body *bCircle = new Body();
+			bCircle->position = Vec2(mouseX, mouseY);
+			bCircle->shape = new Circle(50);
+			bCircle->velocity = Vec2(0, 150);
+			bodies.push_back(bCircle);
+			break;
+		}
 		default:
 			break;
 		}
@@ -61,31 +72,53 @@ void App::ProcessInput()
 void App::Update()
 {
 	graphics.ClearScreen(backgroundColor);
-}
 
-void App::Render()
-{
-	int mouseX, mouseY;
-	SDL_GetMouseState(&mouseX, &mouseY);
-	Body *bCircle = new Body();
-	bCircle->position = Vec2(mouseX, mouseY);
-	bCircle->shape = new Circle(50);
+	static int timeInPreviousFrame;
+	int timeToWait = TIME_PER_FRAME - (SDL_GetTicks() - timeInPreviousFrame);
+	if (timeToWait > 0)
+	{
+		SDL_Delay(timeToWait);
+	}
+	float deltaTime = (SDL_GetTicks() - timeInPreviousFrame) / 1000.0;
+	if (deltaTime > 0.016)
+	{
+		deltaTime = 0.016;
+	}
+	timeInPreviousFrame = SDL_GetTicks();
 
+	for (Body *body : bodies)
+	{
+		body->Movement(deltaTime);
+	}
+
+	// show in screen
 	for (Body *body : bodies)
 	{
 		if (body->shape->GetType() == "circle")
 		{
 			Circle *bC = (Circle *)body->shape;
-			if (CircleToCircle(bCircle, body))
+			if (body->position.y + bC->radius + 150 > graphics.Height())
 			{
-				graphics.DrawCircle(body->position.x, body->position.y, bC->radius, collisionColor);
-				graphics.DrawCircle(bCircle->position.x, bCircle->position.y, 50, collisionColor);
+				body->position.y = graphics.Height() - 150 - bC->radius;
 			}
-			else
-			{
-				graphics.DrawCircle(body->position.x, body->position.y, bC->radius, drawColor);
-				graphics.DrawCircle(bCircle->position.x, bCircle->position.y, 50, drawColor);
-			}
+		}
+	}
+}
+
+void App::Render()
+{
+	for (int i = 0; i < bodies.size(); i++)
+	{
+		Body *body = bodies[i];
+		if (body->shape->GetType() == "circle")
+		{
+			Circle *bC = (Circle *)body->shape;
+			graphics.DrawCircle(body->position.x, body->position.y, bC->radius, drawColor);
+		}
+		else if (body->shape->GetType() == "polygon")
+		{
+			Polygon *polygon = (Polygon *)body->shape;
+			graphics.DrawPolygon(polygon->vertices, drawColor);
 		}
 	}
 
