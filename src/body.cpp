@@ -7,6 +7,7 @@ Body::Body()
 	this->totalForce = Vec2();
 	this->position = Vec2();
 	this->velocity = Vec2();
+	this->acceleration = Vec2();
 	this->shape = NULL;
 }
 
@@ -27,5 +28,6 @@ void Body::ClearForce()
 
 void Body::Movement(const float dt)
 {
+	this->velocity += this->acceleration*dt;
 	this->position += this->velocity*dt;
 }

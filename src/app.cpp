@@ -59,7 +59,7 @@ void App::ProcessInput()
 			Body *bCircle = new Body();
 			bCircle->position = Vec2(mouseX, mouseY);
 			bCircle->shape = new Circle(50);
-			bCircle->velocity = Vec2(0, 150);
+			bCircle->acceleration= Vec2(0, 9.8);
 			bodies.push_back(bCircle);
 			break;
 		}

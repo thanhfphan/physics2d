@@ -10,6 +10,7 @@ struct Body
 	Vec2 totalForce;
 	Vec2 position;
 	Vec2 velocity;
+	Vec2 acceleration;
 	Shape* shape;
 
 	void AddForce(Vec2& force);
