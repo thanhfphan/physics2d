@@ -67,6 +67,7 @@ void Graphics::DrawLine(int x1, int y1, int x2, int y2, Uint32 color)
 void Graphics::DrawCircle(int x, int y, int r, Uint32 color)
 {
 	circleColor(renderer, x, y, r, color);
+	filledCircleColor(renderer, x, y, 1, color);
 }
 
 void Graphics::DrawPolygon(const std::vector<Vec2> &vertices, Uint32 color)

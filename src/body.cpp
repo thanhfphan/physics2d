@@ -16,8 +16,7 @@ Body::~Body()
 }
 void Body::AddForce(Vec2 &force)
 {
-	totalForce.x = totalForce.x + force.x;
-	totalForce.y = totalForce.y + force.y;
+	totalForce += force;
 }
 
 void Body::ClearForce()

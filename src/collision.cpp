@@ -12,10 +12,8 @@ bool CircleToCircle(Body* a, Body* b){
 	Circle* ca = static_cast<Circle*>(a->shape);
 	Circle* cb = static_cast<Circle*>(b->shape);
 
-	Vec2 tmp = Vec2(a->position.x - b->position.x,a->position.y - b->position.y);
-	double distance = sqrt(tmp.x*tmp.x + tmp.y*tmp.y);
-
-	if (distance < (ca->radius + cb->radius)){
+	Vec2 distance = b->position - a->position;
+	if (distance.Magnitude() < (ca->radius + cb->radius)){
 		return true;
 	}
 
