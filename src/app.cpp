@@ -6,6 +6,7 @@
 #include "shape.h"
 #include "body.h"
 #include "collision.h"
+#include "const.h"
 
 App::App()
 {
@@ -26,7 +27,7 @@ void App::Setup()
 	drawColor = 0xFF00FF00;		  // xanh
 	collisionColor = 0xFF0000FF;  // do
 
-	Body *floor = new Body();
+	Body *floor = new Body(0,0,0);
 	std::vector<Vec2> floorVerticies;
 	floorVerticies.push_back(Vec2(30, graphics.Height() - 150));
 	floorVerticies.push_back(Vec2(30, graphics.Height() - 100));
@@ -34,6 +35,13 @@ void App::Setup()
 	floorVerticies.push_back(Vec2(graphics.Width() - 30, graphics.Height() - 150));
 	floor->shape = new Polygon(floorVerticies);
 	bodies.push_back(floor);
+
+	Body *tmp1 = new Body(100, 100, 30);
+	tmp1->shape = new Circle(30);
+	bodies.push_back(tmp1);
+	Body *tmp2 = new Body(300, 100, 15);
+	tmp2->shape = new Circle(15);
+	bodies.push_back(tmp2);
 }
 
 void App::ProcessInput()
@@ -56,10 +64,8 @@ void App::ProcessInput()
 		{
 			int mouseX, mouseY;
 			SDL_GetMouseState(&mouseX, &mouseY);
-			Body *bCircle = new Body();
-			bCircle->position = Vec2(mouseX, mouseY);
+			Body *bCircle = new Body(mouseX, mouseY, 30);
 			bCircle->shape = new Circle(50);
-			bCircle->acceleration= Vec2(0, 9.8);
 			bodies.push_back(bCircle);
 			break;
 		}
@@ -88,7 +94,15 @@ void App::Update()
 
 	for (Body *body : bodies)
 	{
-		body->Movement(deltaTime);
+		Vec2 weightForce = Vec2(0, body->mass * GRAVITY);
+		body->AddForce(weightForce);
+		Vec2 wind = Vec2(2, 0);
+		body->AddForce(wind);
+	}
+
+	for (Body *body : bodies)
+	{
+		body->Integrate(deltaTime);
 	}
 
 	// show in screen
@@ -102,6 +116,11 @@ void App::Update()
 				body->position.y = graphics.Height() - 150 - bC->radius;
 			}
 		}
+	}
+
+	for (Body *body : bodies)
+	{
+		body->ClearForce();
 	}
 }
 

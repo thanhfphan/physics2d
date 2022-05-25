@@ -1,20 +1,23 @@
 #include "body.h"
 #include "log.h"
+#include "const.h"
 
-Body::Body()
+Body::Body(float x, float y, float m)
 {
 	Log::Info("body constructor has called");
-	this->totalForce = Vec2();
-	this->position = Vec2();
-	this->velocity = Vec2();
-	this->acceleration = Vec2();
-	this->shape = NULL;
+	position = Vec2(x,y);
+	mass = m;
+
+	totalForce = Vec2();
+	velocity = Vec2();
+	acceleration = Vec2();
+	shape = NULL;
 }
 
 Body::~Body()
 {
 	Log::Info("body destructor has called");
-	// delete this->shape;
+	// delete shape;
 }
 void Body::AddForce(Vec2 &force)
 {
@@ -23,11 +26,12 @@ void Body::AddForce(Vec2 &force)
 
 void Body::ClearForce()
 {
-	this->totalForce = Vec2();
+	totalForce = Vec2();
 }
 
-void Body::Movement(const float dt)
+void Body::Integrate(const float dt)
 {
-	this->velocity += this->acceleration*dt;
-	this->position += this->velocity*dt;
+	acceleration = (totalForce / mass) * METER_PER_PIXEL;
+	velocity += acceleration * dt;
+	position += velocity * dt;
 }

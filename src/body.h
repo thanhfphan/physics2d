@@ -5,8 +5,12 @@
 
 struct Body
 {
-	Body();
+	Body(float x, float y, float mass);
 	~Body();
+
+	float mass;
+	float invMass;
+
 	Vec2 totalForce;
 	Vec2 position;
 	Vec2 velocity;
@@ -15,5 +19,5 @@ struct Body
 
 	void AddForce(Vec2& force);
 	void ClearForce();
-	void Movement(const float dt);
+	void Integrate(const float dt);
 };
