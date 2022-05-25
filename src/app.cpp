@@ -37,11 +37,11 @@ void App::Setup()
 	floor->shape = new Polygon(floorVerticies);
 	bodies.push_back(floor);
 
-	Body *tmp1 = new Body(100, 100, 30);
-	tmp1->shape = new Circle(30);
+	Body *tmp1 = new Body(200, 400, 20);
+	tmp1->shape = new Circle(20);
 	bodies.push_back(tmp1);
-	Body *tmp2 = new Body(300, 100, 15);
-	tmp2->shape = new Circle(15);
+	Body *tmp2 = new Body(400, 500, 50);
+	tmp2->shape = new Circle(50);
 	bodies.push_back(tmp2);
 }
 
@@ -93,14 +93,18 @@ void App::Update()
 	}
 	timeInPreviousFrame = SDL_GetTicks();
 
-	for (auto body : bodies)
-	{
-		Vec2 weight = Force::GenWeightForce(body, GRAVITY);
-		body->AddForce(weight);
+	// for (auto body : bodies)
+	// {
+		// Vec2 weight = Force::GenWeightForce(body, GRAVITY);
+		// body->AddForce(weight);
 
-		Vec2 wind = Vec2(2, 0);
-		body->AddForce(wind);
-	}
+		// Vec2 wind = Vec2(2, 0);
+		// body->AddForce(wind);
+	// }
+	Vec2 gaForce = Force::GenGravitationalAttraction(bodies[1], bodies[2], 20);
+	bodies[1]->AddForce(gaForce);
+	Vec2 tmp = -gaForce;
+	bodies[2]->AddForce(tmp);
 
 	for (auto body : bodies)
 	{

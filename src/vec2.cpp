@@ -64,6 +64,11 @@ Vec2 &Vec2::operator/=(const float n)
 	return *this *= (1 / n);
 }
 
+Vec2 Vec2::operator-() const
+{
+	return *this * -1;
+}
+
 Vec2 Vec2::Rotate(const float angle) const
 {
 	Vec2 result;
