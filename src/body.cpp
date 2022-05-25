@@ -17,7 +17,6 @@ Body::Body(float x, float y, float m)
 Body::~Body()
 {
 	Log::Info("body destructor has called");
-	// delete shape;
 }
 void Body::AddForce(Vec2 &force)
 {

@@ -1,4 +1,4 @@
-CC = g++ 
+CC = g++
 LANG_STD= -std=c++11
 COMPILER_FLAGS = -Wall
 SRC_FILES = *.cpp

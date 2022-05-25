@@ -9,7 +9,6 @@ struct Body
 	~Body();
 
 	float mass;
-	float invMass;
 
 	Vec2 totalForce;
 	Vec2 position;

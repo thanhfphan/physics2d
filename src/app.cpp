@@ -7,6 +7,7 @@
 #include "body.h"
 #include "collision.h"
 #include "const.h"
+#include "force.h"
 
 App::App()
 {
@@ -27,7 +28,7 @@ void App::Setup()
 	drawColor = 0xFF00FF00;		  // xanh
 	collisionColor = 0xFF0000FF;  // do
 
-	Body *floor = new Body(0,0,0);
+	Body *floor = new Body(0, 0, 0);
 	std::vector<Vec2> floorVerticies;
 	floorVerticies.push_back(Vec2(30, graphics.Height() - 150));
 	floorVerticies.push_back(Vec2(30, graphics.Height() - 100));
@@ -92,21 +93,22 @@ void App::Update()
 	}
 	timeInPreviousFrame = SDL_GetTicks();
 
-	for (Body *body : bodies)
+	for (auto body : bodies)
 	{
-		Vec2 weightForce = Vec2(0, body->mass * GRAVITY);
-		body->AddForce(weightForce);
+		Vec2 weight = Force::GenWeightForce(body, GRAVITY);
+		body->AddForce(weight);
+
 		Vec2 wind = Vec2(2, 0);
 		body->AddForce(wind);
 	}
 
-	for (Body *body : bodies)
+	for (auto body : bodies)
 	{
 		body->Integrate(deltaTime);
 	}
 
 	// show in screen
-	for (Body *body : bodies)
+	for (auto body : bodies)
 	{
 		if (body->shape->GetType() == "circle")
 		{
@@ -118,7 +120,7 @@ void App::Update()
 		}
 	}
 
-	for (Body *body : bodies)
+	for (auto body : bodies)
 	{
 		body->ClearForce();
 	}
