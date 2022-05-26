@@ -38,4 +38,13 @@ struct Force
 
 		return direction* g * (a->mass * b->mass)/ distance;
 	}
+
+	static Vec2 GenSpringForce(const Body *a, Vec2 anchor, float restLength, float k){
+		Vec2 d = a->position - anchor;
+
+		float deltaL = d.Magnitude() - restLength;
+		Vec2 direction = d.UnitVector();
+
+		return direction * -k * deltaL;
+	}
 };

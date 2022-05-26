@@ -37,12 +37,12 @@ void App::Setup()
 	floor->shape = new Polygon(floorVerticies);
 	bodies.push_back(floor);
 
-	Body *tmp1 = new Body(200, 400, 20);
-	tmp1->shape = new Circle(20);
-	bodies.push_back(tmp1);
-	Body *tmp2 = new Body(400, 500, 50);
-	tmp2->shape = new Circle(50);
-	bodies.push_back(tmp2);
+	Body *anchor= new Body(300, 100, 3);
+	anchor->shape = new Circle(5);
+	bodies.push_back(anchor);
+	Body *obj = new Body(300, 500, 1);
+	obj->shape = new Circle(15);
+	bodies.push_back(obj);
 }
 
 void App::ProcessInput()
@@ -93,18 +93,10 @@ void App::Update()
 	}
 	timeInPreviousFrame = SDL_GetTicks();
 
-	// for (auto body : bodies)
-	// {
-		// Vec2 weight = Force::GenWeightForce(body, GRAVITY);
-		// body->AddForce(weight);
-
-		// Vec2 wind = Vec2(2, 0);
-		// body->AddForce(wind);
-	// }
-	Vec2 gaForce = Force::GenGravitationalAttraction(bodies[1], bodies[2], 20);
-	bodies[1]->AddForce(gaForce);
-	Vec2 tmp = -gaForce;
-	bodies[2]->AddForce(tmp);
+	Body* anchor= bodies[1];
+	Body* body = bodies[2];
+	Vec2 springForce = Force::GenSpringForce(body, anchor->position, 300, 2);
+	body->AddForce(springForce);
 
 	for (auto body : bodies)
 	{
@@ -146,6 +138,10 @@ void App::Render()
 			graphics.DrawPolygon(polygon->vertices, drawColor);
 		}
 	}
+
+	Body* anchor= bodies[1];
+	Body* body = bodies[2];
+	graphics.DrawLine(anchor->position.x, anchor->position.y, body->position.x, body->position.y, drawColor);
 
 	graphics.Render();
 }
