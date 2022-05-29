@@ -28,23 +28,25 @@ struct Force
 	{
 		Vec2 d = (b->position - a->position);
 		Vec2 direction = d.UnitVector();
-
 		float distance = d.MagnitudeSquared();
-		if (distance < 5){
+		if (distance < 5)
+		{
 			distance = 5;
-		}else if (distance > 100){
+		}
+		else if (distance > 100)
+		{
 			distance = 100;
 		}
 
-		return direction* g * (a->mass * b->mass)/ distance;
+		return direction * g * (a->mass * b->mass) / distance;
 	}
 
-	static Vec2 GenSpringForce(const Body *a, Vec2 anchor, float restLength, float k){
-		Vec2 d = a->position - anchor;
-
-		float deltaL = d.Magnitude() - restLength;
+	static Vec2 GenSpringForce(const Body *a, const Body *b, float restLength, float k)
+	{
+		Vec2 d = a->position - b->position;
+		float displacement = d.Magnitude() - restLength;
 		Vec2 direction = d.UnitVector();
 
-		return direction * -k * deltaL;
+		return direction * -k * displacement;
 	}
 };

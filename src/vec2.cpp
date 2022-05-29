@@ -77,7 +77,7 @@ Vec2 Vec2::Rotate(const float angle) const
 	return result;
 }
 
-Vec2 &Vec2::Normalize()
+Vec2 &Vec2::Normalise()
 {
 	float length = this->Magnitude();
 	if (length != 0)
@@ -103,7 +103,7 @@ Vec2 Vec2::UnitVector() const
 
 Vec2 Vec2::Normal() const
 {
-	return Vec2(this->y, -this->x).Normalize();
+	return Vec2(this->y, -this->x).Normalise();
 }
 
 void Vec2::Scale(const float n)

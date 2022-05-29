@@ -59,15 +59,25 @@ int Graphics::Height()
 	return windowHeight;
 }
 
-void Graphics::DrawLine(int x1, int y1, int x2, int y2, Uint32 color)
+void Graphics::DrawLine(float x1, float y1, float x2, float y2, Uint32 color)
 {
-	lineColor(renderer, x1, y1, x1, y2, color);
+	lineColor(renderer, x1, y1, x2, y2, color);
 }
 
-void Graphics::DrawCircle(int x, int y, int r, Uint32 color)
+void Graphics::DrawCircle(float x, float y, int r, Uint32 color)
 {
 	circleColor(renderer, x, y, r, color);
 	filledCircleColor(renderer, x, y, 1, color);
+}
+
+void Graphics::DrawFilledCircle(float x, float y, int r, Uint32 color)
+{
+	filledCircleColor(renderer, x, y, r, color);
+}
+
+void Graphics::DrawRectangle(int x1, int y1, int x2, int y2, Uint32 color)
+{
+	rectangleColor(renderer, x1, y1, x2, y2, color);
 }
 
 void Graphics::DrawPolygon(const std::vector<Vec2> &vertices, Uint32 color)

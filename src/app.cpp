@@ -24,25 +24,23 @@ void App::Setup()
 	std::cout << "App:Setup had called ..." << std::endl;
 	isRunning = true;
 	graphics.OpenWindow();
-	backgroundColor = 0xFF0F0721; // tim
-	drawColor = 0xFF00FF00;		  // xanh
-	collisionColor = 0xFF0000FF;  // do
+	backgroundColor = 0xFF0F0721;
+	drawColor = 0xFF00FF00;
+	collisionColor = 0xFF0000FF; // do
 
-	Body *floor = new Body(0, 0, 0);
-	std::vector<Vec2> floorVerticies;
-	floorVerticies.push_back(Vec2(30, graphics.Height() - 150));
-	floorVerticies.push_back(Vec2(30, graphics.Height() - 100));
-	floorVerticies.push_back(Vec2(graphics.Width() - 30, graphics.Height() - 100));
-	floorVerticies.push_back(Vec2(graphics.Width() - 30, graphics.Height() - 150));
-	floor->shape = new Polygon(floorVerticies);
-	bodies.push_back(floor);
-
-	Body *anchor= new Body(300, 100, 3);
+	anchor = new Body(500, 150, 1);
 	anchor->shape = new Circle(5);
-	bodies.push_back(anchor);
-	Body *obj = new Body(300, 500, 1);
-	obj->shape = new Circle(15);
-	bodies.push_back(obj);
+
+	pushForce = Vec2();
+
+	int height = 220;
+	for (int i = 0; i < 15; i++)
+	{
+		Body *obj = new Body(500, height, 1);
+		obj->shape = new Circle(7);
+		bodies.push_back(obj);
+		height += 20;
+	}
 }
 
 void App::ProcessInput()
@@ -61,13 +59,21 @@ void App::ProcessInput()
 				isRunning = false;
 			}
 			break;
-		case SDL_MOUSEBUTTONUP:
+		case SDL_MOUSEBUTTONUP:{
+			pushForce = Vec2();
+			break;
+		}
+		case SDL_MOUSEBUTTONDOWN:
 		{
 			int mouseX, mouseY;
 			SDL_GetMouseState(&mouseX, &mouseY);
-			Body *bCircle = new Body(mouseX, mouseY, 30);
-			bCircle->shape = new Circle(50);
-			bodies.push_back(bCircle);
+			Vec2 mousePosition = Vec2(mouseX, mouseY);
+
+			Body *lastBody = bodies[bodies.size() - 1];
+			Vec2 d = (mousePosition - lastBody->position);
+			Vec2 direction = d.UnitVector();
+
+			pushForce = direction * 8;
 			break;
 		}
 		default:
@@ -93,27 +99,38 @@ void App::Update()
 	}
 	timeInPreviousFrame = SDL_GetTicks();
 
-	Body* anchor= bodies[1];
-	Body* body = bodies[2];
-	Vec2 springForce = Force::GenSpringForce(body, anchor->position, 300, 2);
-	body->AddForce(springForce);
+	static float restLength = 15;
+	static float k = 4;
+	Body *firstBody = bodies[0];
+	Vec2 springForce = Force::GenSpringForce(firstBody, anchor, restLength, k);
+	firstBody->AddForce(springForce);
+
+	for (auto body : bodies)
+	{
+		body->AddForce(pushForce);
+
+		Vec2 weightForce = Force::GenWeightForce(body, GRAVITY);
+		body->AddForce(weightForce);
+
+		Vec2 dragForce = Force::GenDragForce(body, 0.000006);
+		body->AddForce(dragForce);
+	}
+
+	for (int i = 1; i < bodies.size(); i++)
+	{
+		Body *prevBody = bodies[i - 1];
+		Body *body = bodies[i];
+
+
+		Vec2 springForce = Force::GenSpringForce(body, prevBody, restLength, k);
+		body->AddForce(springForce);
+		Vec2 springForce2 = -springForce;
+		prevBody->AddForce(springForce2);
+	}
 
 	for (auto body : bodies)
 	{
 		body->Integrate(deltaTime);
-	}
-
-	// show in screen
-	for (auto body : bodies)
-	{
-		if (body->shape->GetType() == "circle")
-		{
-			Circle *bC = (Circle *)body->shape;
-			if (body->position.y + bC->radius + 150 > graphics.Height())
-			{
-				body->position.y = graphics.Height() - 150 - bC->radius;
-			}
-		}
 	}
 
 	for (auto body : bodies)
@@ -124,24 +141,32 @@ void App::Update()
 
 void App::Render()
 {
+	graphics.DrawFilledCircle(anchor->position.x, anchor->position.y, 5, 0xFF0000FF);
+
 	for (int i = 0; i < bodies.size(); i++)
 	{
 		Body *body = bodies[i];
 		if (body->shape->GetType() == "circle")
 		{
 			Circle *bC = (Circle *)body->shape;
-			graphics.DrawCircle(body->position.x, body->position.y, bC->radius, drawColor);
+			graphics.DrawFilledCircle(body->position.x, body->position.y, bC->radius, drawColor);
 		}
 		else if (body->shape->GetType() == "polygon")
 		{
 			Polygon *polygon = (Polygon *)body->shape;
 			graphics.DrawPolygon(polygon->vertices, drawColor);
 		}
-	}
 
-	Body* anchor= bodies[1];
-	Body* body = bodies[2];
-	graphics.DrawLine(anchor->position.x, anchor->position.y, body->position.x, body->position.y, drawColor);
+		if (i == 0)
+		{
+			graphics.DrawLine(body->position.x, body->position.y, anchor->position.x, anchor->position.y, 0xFFFFFFFF);
+		}
+		else
+		{
+			Body *preBody = bodies[i - 1];
+			graphics.DrawLine(body->position.x, body->position.y, preBody->position.x, preBody->position.y, 0xFFFFFFFF);
+		}
+	}
 
 	graphics.Render();
 }

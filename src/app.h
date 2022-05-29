@@ -15,6 +15,8 @@ private:
 
 public:
 	std::vector<Body *> bodies;
+	Body *anchor;
+	Vec2 pushForce;
 
 public:
 	App();

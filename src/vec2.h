@@ -19,7 +19,7 @@ struct Vec2
 	Vec2& operator/=(const float n);
 
 	Vec2 Rotate(const float angle) const;
-	Vec2 &Normalize();
+	Vec2 &Normalise();
 	Vec2 UnitVector() const;
 	Vec2 Normal() const;
 
