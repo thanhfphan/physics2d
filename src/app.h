@@ -12,12 +12,11 @@ private:
 	Uint32 backgroundColor;
 	Uint32 drawColor;
 	Uint32 collisionColor;
-
-public:
 	std::vector<Body *> bodies;
-	Body *anchor;
 	Vec2 pushForce;
 
+	// custom
+	int positionMouseX, positionMouseY;
 public:
 	App();
 	~App();

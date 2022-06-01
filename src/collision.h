@@ -3,4 +3,9 @@
 #include "shape.h"
 #include "body.h"
 
-bool CircleToCircle(Body* a, Body* b);
+class Collision
+{
+public:
+	static bool CircleToCircle(Body *a, Body *b);
+	static bool PolygonToPylygon(Body *a, Body *b);
+};

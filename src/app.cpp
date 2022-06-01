@@ -26,21 +26,18 @@ void App::Setup()
 	graphics.OpenWindow();
 	backgroundColor = 0xFF0F0721;
 	drawColor = 0xFF00FF00;
-	collisionColor = 0xFF0000FF; // do
-
-	anchor = new Body(500, 150, 1);
-	anchor->shape = new Circle(5);
-
+	collisionColor = 0xFF0000FF;
 	pushForce = Vec2();
 
-	int height = 220;
-	for (int i = 0; i < 15; i++)
-	{
-		Body *obj = new Body(500, height, 1);
-		obj->shape = new Circle(7);
-		bodies.push_back(obj);
-		height += 20;
-	}
+	// custom
+	positionMouseX = 0;
+	positionMouseY = 0;
+
+	Body *staticBody = new Body(500, 500, 1);
+	std::vector<Vec2> vertices = {Vec2(0, 200), Vec2(-200, 0), Vec2(200, 0)};
+	Polygon *triangle = new Polygon(vertices);
+	staticBody->shape = triangle;
+	bodies.push_back(staticBody);
 }
 
 void App::ProcessInput()
@@ -59,21 +56,22 @@ void App::ProcessInput()
 				isRunning = false;
 			}
 			break;
-		case SDL_MOUSEBUTTONUP:{
+		case SDL_MOUSEBUTTONUP:
+		{
 			pushForce = Vec2();
 			break;
 		}
 		case SDL_MOUSEBUTTONDOWN:
 		{
+			break;
+		}
+		case SDL_MOUSEMOTION:
+		{
 			int mouseX, mouseY;
 			SDL_GetMouseState(&mouseX, &mouseY);
-			Vec2 mousePosition = Vec2(mouseX, mouseY);
+			positionMouseX = mouseX;
+			positionMouseY = mouseY;
 
-			Body *lastBody = bodies[bodies.size() - 1];
-			Vec2 d = (mousePosition - lastBody->position);
-			Vec2 direction = d.UnitVector();
-
-			pushForce = direction * 8;
 			break;
 		}
 		default:
@@ -99,38 +97,14 @@ void App::Update()
 	}
 	timeInPreviousFrame = SDL_GetTicks();
 
-	static float restLength = 15;
-	static float k = 4;
-	Body *firstBody = bodies[0];
-	Vec2 springForce = Force::GenSpringForce(firstBody, anchor, restLength, k);
-	firstBody->AddForce(springForce);
-
-	for (auto body : bodies)
-	{
-		body->AddForce(pushForce);
-
-		Vec2 weightForce = Force::GenWeightForce(body, GRAVITY);
-		body->AddForce(weightForce);
-
-		Vec2 dragForce = Force::GenDragForce(body, 0.000006);
-		body->AddForce(dragForce);
-	}
-
-	for (int i = 1; i < bodies.size(); i++)
-	{
-		Body *prevBody = bodies[i - 1];
-		Body *body = bodies[i];
-
-
-		Vec2 springForce = Force::GenSpringForce(body, prevBody, restLength, k);
-		body->AddForce(springForce);
-		Vec2 springForce2 = -springForce;
-		prevBody->AddForce(springForce2);
-	}
-
 	for (auto body : bodies)
 	{
 		body->Integrate(deltaTime);
+		if (body->shape->GetType() == "polygon")
+		{
+			Polygon *polygon = (Polygon *)body->shape;
+			polygon->UpdateVertices(body->position);
+		}
 	}
 
 	for (auto body : bodies)
@@ -141,32 +115,24 @@ void App::Update()
 
 void App::Render()
 {
-	graphics.DrawFilledCircle(anchor->position.x, anchor->position.y, 5, 0xFF0000FF);
+	Body *tBody = new Body(positionMouseX, positionMouseY, 1);
+	std::vector<Vec2> veticles = {Vec2(500, 0), Vec2(500, 300), Vec2(100,100)};
+	Polygon *po = new Polygon(veticles);
+	tBody->shape = po;
+	po->UpdateVertices(tBody->position);
 
-	for (int i = 0; i < bodies.size(); i++)
+	Uint32 color = drawColor;
+
+	for (auto body : bodies)
 	{
-		Body *body = bodies[i];
-		if (body->shape->GetType() == "circle")
+		if (Collision::PolygonToPylygon(body, tBody))
 		{
-			Circle *bC = (Circle *)body->shape;
-			graphics.DrawFilledCircle(body->position.x, body->position.y, bC->radius, drawColor);
+			color = collisionColor;
 		}
-		else if (body->shape->GetType() == "polygon")
-		{
-			Polygon *polygon = (Polygon *)body->shape;
-			graphics.DrawPolygon(polygon->vertices, drawColor);
-		}
-
-		if (i == 0)
-		{
-			graphics.DrawLine(body->position.x, body->position.y, anchor->position.x, anchor->position.y, 0xFFFFFFFF);
-		}
-		else
-		{
-			Body *preBody = bodies[i - 1];
-			graphics.DrawLine(body->position.x, body->position.y, preBody->position.x, preBody->position.y, 0xFFFFFFFF);
-		}
+		graphics.DrawBody(body, color);
 	}
+
+	graphics.DrawBody(tBody, color);
 
 	graphics.Render();
 }

@@ -1,6 +1,6 @@
 #include "graphics.h"
-
 #include "log.h"
+#include "shape.h"
 
 Graphics::Graphics() {}
 Graphics::~Graphics() {}
@@ -80,7 +80,7 @@ void Graphics::DrawRectangle(int x1, int y1, int x2, int y2, Uint32 color)
 	rectangleColor(renderer, x1, y1, x2, y2, color);
 }
 
-void Graphics::DrawPolygon(const std::vector<Vec2> &vertices, Uint32 color)
+void Graphics::DrawPolygon(float x, float y, const std::vector<Vec2> &vertices, Uint32 color)
 {
 	int n = vertices.size();
 	std::vector<Sint16> vx;
@@ -93,4 +93,24 @@ void Graphics::DrawPolygon(const std::vector<Vec2> &vertices, Uint32 color)
 	}
 
 	polygonColor(renderer, &vx[0], &vy[0], n, color);
+	filledCircleColor(renderer, x, y, 3, color);
+}
+void Graphics::DrawBody(Body *body, Uint32 color)
+{
+	if (body->shape == NULL)
+	{
+		Log::Warn("can't draw body not have shape");
+		return;
+	}
+
+	if (body->shape->GetType() == "circle")
+	{
+		Circle *bC = (Circle *)body->shape;
+		DrawFilledCircle(body->position.x, body->position.y, bC->radius, color);
+	}
+	else if (body->shape->GetType() == "polygon")
+	{
+		Polygon *polygon = (Polygon *)body->shape;
+		DrawPolygon(body->position.x, body->position.y, polygon->worldVertices, color);
+	}
 }
