@@ -84,6 +84,7 @@ void App::Update()
 {
 	graphics.ClearScreen(backgroundColor);
 
+	// Time per frame
 	static int timeInPreviousFrame;
 	int timeToWait = TIME_PER_FRAME - (SDL_GetTicks() - timeInPreviousFrame);
 	if (timeToWait > 0)
@@ -96,15 +97,11 @@ void App::Update()
 		deltaTime = 0.016;
 	}
 	timeInPreviousFrame = SDL_GetTicks();
+	// End - Time per frame
 
 	for (auto body : bodies)
 	{
-		body->Integrate(deltaTime);
-		if (body->shape->GetType() == "polygon")
-		{
-			Polygon *polygon = (Polygon *)body->shape;
-			polygon->UpdateVertices(body->position);
-		}
+		body->Update(deltaTime);
 	}
 
 	for (auto body : bodies)

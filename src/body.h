@@ -19,4 +19,5 @@ struct Body
 	void AddForce(Vec2& force);
 	void ClearForce();
 	void Integrate(const float dt);
+	void Update(const float dt);
 };
