@@ -36,9 +36,21 @@ void App::Setup()
 	positionMouseX = 0;
 	positionMouseY = 0;
 
-	Circle *c = new Circle(100);
-	Body *b = new Body(c, 500, 500, 1);
+	Box *box = new Box(400, 250);
+	Body *b = new Body(box, 650, 400, 1);
 	bodies.push_back(b);
+
+	std::vector<Vec2> localVertices;
+	localVertices.push_back(Vec2(-100, 300));
+	localVertices.push_back(Vec2(-200, -500));
+	localVertices.push_back(Vec2(300, 0));
+	Polygon* polygon = new Polygon(localVertices);
+	Body* p = new Body(polygon, 800,300, 1);
+	bodies.push_back(p);
+
+	Circle* circle = new Circle(200);
+	Body *c = new Body(circle, 700, 600, 1);
+	bodies.push_back(c);
 }
 
 void App::ProcessInput()
@@ -105,7 +117,7 @@ void App::Update()
 		// Vec2 weightForce = Force::GenWeightForce(body, GRAVITY * METER_PER_PIXEL);
 		// body->AddForce(weightForce);
 
-		float torque = 20.0 * METER_PER_PIXEL; 
+		float torque = 40.0 * METER_PER_PIXEL; 
 		body->AddTorque(torque);
 	}
 

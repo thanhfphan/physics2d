@@ -114,4 +114,9 @@ void Graphics::DrawBody(Body *body, Uint32 color)
 		Polygon *polygon = (Polygon *)body->shape;
 		DrawPolygon(body->position.x, body->position.y, polygon->worldVertices, color);
 	}
+	else if (body->shape->GetType() == "box")
+	{
+		Box *box = (Box *)body->shape;
+		DrawPolygon(body->position.x, body->position.y, box->worldVertices, color);
+	}
 }

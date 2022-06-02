@@ -35,7 +35,8 @@ void Body::AddForce(Vec2 &force)
 {
 	totalForce += force;
 }
-void Body::AddTorque(float torque){
+void Body::AddTorque(float torque)
+{
 	sumTorque += torque;
 }
 
@@ -69,9 +70,5 @@ void Body::Update(const float dt)
 {
 	IntegrateLinear(dt);
 	IntegrateAngular(dt);
-	if (this->shape->GetType() == "polygon")
-	{
-		Polygon *polygon = (Polygon *)this->shape;
-		polygon->UpdateVertices(this->position);
-	}
+	shape->UpdateVertices(this->position, this->rotation);
 }
