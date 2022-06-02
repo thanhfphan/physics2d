@@ -58,8 +58,6 @@ bool Collision::PolygonToPylygon(Body *ba, Body *bb)
 			minStep = std::min(minStep, proj);
 		}
 		separation = std::max(separation, minStep);
-		Log::Debug("separation " + std::to_string(separation));
 	}
-	Log::Debug("----------------");
 	return separation < 0;
 }

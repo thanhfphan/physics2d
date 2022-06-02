@@ -25,7 +25,7 @@ public:
 	int Height();
 
 	void DrawLine(float x1, float y1, float x2, float y2, Uint32 color);
-	void DrawCircle(float x, float y, int r, Uint32 color);
+	void DrawCircle(float x, float y, int r, float angle, Uint32 color);
 	void DrawFilledCircle(float x, float y, int r, Uint32 color);
 	void DrawPolygon(float x, float y, const std::vector<Vec2> &vertices, Uint32 color);
 	void DrawRectangle(int x1, int y1, int x2, int y2, Uint32 color);

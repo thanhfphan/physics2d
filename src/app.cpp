@@ -16,6 +16,9 @@ App::App()
 
 App::~App()
 {
+	for (auto body : bodies){
+		delete body;
+	}
 	Log::Info("App destructor had called");
 }
 
@@ -33,11 +36,9 @@ void App::Setup()
 	positionMouseX = 0;
 	positionMouseY = 0;
 
-	Body *staticBody = new Body(500, 500, 1);
-	std::vector<Vec2> vertices = {Vec2(0, 200), Vec2(-200, 0), Vec2(200, 0)};
-	Polygon *triangle = new Polygon(vertices);
-	staticBody->shape = triangle;
-	bodies.push_back(staticBody);
+	Circle *c = new Circle(100);
+	Body *b = new Body(c, 500, 500, 1);
+	bodies.push_back(b);
 }
 
 void App::ProcessInput()
@@ -101,35 +102,25 @@ void App::Update()
 
 	for (auto body : bodies)
 	{
-		body->Update(deltaTime);
+		// Vec2 weightForce = Force::GenWeightForce(body, GRAVITY * METER_PER_PIXEL);
+		// body->AddForce(weightForce);
+
+		float torque = 20.0 * METER_PER_PIXEL; 
+		body->AddTorque(torque);
 	}
 
 	for (auto body : bodies)
 	{
-		body->ClearForce();
+		body->Update(deltaTime);
 	}
 }
 
 void App::Render()
 {
-	Body *tBody = new Body(positionMouseX, positionMouseY, 1);
-	std::vector<Vec2> veticles = {Vec2(500, 0), Vec2(500, 300), Vec2(100,100)};
-	Polygon *po = new Polygon(veticles);
-	tBody->shape = po;
-	po->UpdateVertices(tBody->position);
-
-	Uint32 color = drawColor;
-
 	for (auto body : bodies)
 	{
-		if (Collision::PolygonToPylygon(body, tBody))
-		{
-			color = collisionColor;
-		}
-		graphics.DrawBody(body, color);
+		graphics.DrawBody(body, drawColor);
 	}
-
-	graphics.DrawBody(tBody, color);
 
 	graphics.Render();
 }

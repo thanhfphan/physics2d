@@ -64,10 +64,11 @@ void Graphics::DrawLine(float x1, float y1, float x2, float y2, Uint32 color)
 	lineColor(renderer, x1, y1, x2, y2, color);
 }
 
-void Graphics::DrawCircle(float x, float y, int r, Uint32 color)
+void Graphics::DrawCircle(float x, float y, int r, float angle, Uint32 color)
 {
 	circleColor(renderer, x, y, r, color);
-	filledCircleColor(renderer, x, y, 1, color);
+	filledCircleColor(renderer, x, y, 3, color);
+	lineColor(renderer, x, y, x + cos(angle) * r, y + sin(angle) * r, color);
 }
 
 void Graphics::DrawFilledCircle(float x, float y, int r, Uint32 color)
@@ -106,7 +107,7 @@ void Graphics::DrawBody(Body *body, Uint32 color)
 	if (body->shape->GetType() == "circle")
 	{
 		Circle *bC = (Circle *)body->shape;
-		DrawFilledCircle(body->position.x, body->position.y, bC->radius, color);
+		DrawCircle(body->position.x, body->position.y, bC->radius, body->rotation, color);
 	}
 	else if (body->shape->GetType() == "polygon")
 	{

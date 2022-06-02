@@ -6,32 +6,24 @@
 
 struct Shape
 {
-	Shape(){}
-	~Shape(){}
-	virtual std::string GetType() = 0;
+	virtual ~Shape() = default;
+	virtual std::string GetType() const = 0;
 	// convert local vertices to world vertices
 	virtual void UpdateVertices(Vec2 position) = 0;
+	virtual float GetMomentOfInertia() const = 0; // note: without mass
+	virtual Shape *Clone() const = 0;
 };
-
 struct Circle : public Shape
 {
 	int radius;
 
-	Circle(int r)
-	{
-		this->radius = r;
-	}
+	Circle(int r);
+	virtual ~Circle();
 
-	~Circle() {}
-
-	std::string GetType()
-	{
-		return "circle";
-	}
-
-	void UpdateVertices(Vec2 position){
-		return;
-	}
+	std::string GetType() const override;
+	void UpdateVertices(Vec2 position) override;
+	float GetMomentOfInertia() const override;
+	Shape *Clone() const override;
 };
 
 struct Polygon : public Shape
@@ -39,26 +31,13 @@ struct Polygon : public Shape
 	std::vector<Vec2> localVertices;
 	std::vector<Vec2> worldVertices;
 
-	Polygon(std::vector<Vec2> localVertices){
-		this->localVertices = localVertices;
-		this->worldVertices = localVertices;
-	}
+	Polygon(std::vector<Vec2> localVertices);
+	virtual ~Polygon();
 
-	~Polygon(){}
-	
-	std::string GetType()
-	{
-		return "polygon";
-	}
+	std::string GetType() const override;
+	float GetMomentOfInertia() const override;
+	void UpdateVertices(Vec2 position) override;
+	Shape *Clone() const override;
 
-	void UpdateVertices(Vec2 position){
-		for(int i=0; i< localVertices.size(); i ++){
-			worldVertices[i] = localVertices[i] + position;
-		}
-	}
-
-	Vec2 GetEdge(int index){
-		int nextIndex = (index + 1) % worldVertices.size();
-		return worldVertices[nextIndex] - worldVertices[index];
-	}
+	Vec2 GetEdge(int index) const;
 };
