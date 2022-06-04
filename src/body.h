@@ -13,6 +13,8 @@ struct Body
 	float I;
 	float invI;
 
+	float restitution;
+
 	Vec2 totalForce;
 
 	Vec2 position;
@@ -33,4 +35,6 @@ struct Body
 	void IntegrateLinear(const float dt);
 	void IntegrateAngular(const float dt);
 	void Update(const float dt);
+	bool IsStatic() const;
+	void ApplyImpulse(const Vec2 j);
 };

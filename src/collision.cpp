@@ -5,31 +5,6 @@
 #include <limits>
 #include <iostream>
 
-bool Collision::IsColliding(Body *a, Body *b, Contact &contact)
-{
-	if (!a->shape || !b->shape)
-	{
-		Log::Error("can't check collison between pylygon vs polygon because shape is null");
-		return false;
-	}
-
-	std::string aType = a->shape->GetType();
-	std::string bType = b->shape->GetType();
-
-	if (aType == "circle" && bType == "circle")
-	{
-		return CircleToCircle(a, b, contact);
-	}
-	else if (aType == "polygon" && bType == "polygon")
-	{
-		return PolygonToPylygon(a, b, contact);
-	}
-
-	Log::Error("IsColliding between " + aType + " vs " + bType + " is not supported");
-
-	return false;
-}
-
 bool Collision::CircleToCircle(Body *a, Body *b, Contact &contact)
 {
 	Circle *ca = static_cast<Circle *>(a->shape);
@@ -75,4 +50,27 @@ bool Collision::PolygonToPylygon(Body *a, Body *b, Contact &contact)
 		separation = std::max(separation, minStep);
 	}
 	return separation < 0;
+}
+
+bool Collision::IsColliding(Body *a, Body *b, Contact &contact)
+{
+	if(a->IsStatic() && b->IsStatic()){
+		return false;
+	}
+
+	std::string aType = a->shape->GetType();
+	std::string bType = b->shape->GetType();
+
+	if (aType == "circle" && bType == "circle")
+	{
+		return CircleToCircle(a, b, contact);
+	}
+	else if (aType == "polygon" && bType == "polygon")
+	{
+		return PolygonToPylygon(a, b, contact);
+	}
+
+	Log::Error("IsColliding between " + aType + " vs " + bType + " is not supported");
+
+	return false;
 }

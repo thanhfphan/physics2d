@@ -2,6 +2,7 @@
 #include "log.h"
 #include "const.h"
 #include "shape.h"
+#include <math.h>
 
 Body::Body(Shape *shape, float x, float y, float m)
 {
@@ -12,6 +13,8 @@ Body::Body(Shape *shape, float x, float y, float m)
 
 	I = shape->GetMomentOfInertia() * mass;
 	invI = I != 0.0f ? 1.0 / I : 0.0f;
+
+	restitution = 1.0f;
 
 	totalForce = Vec2();
 	velocity = Vec2();
@@ -52,6 +55,10 @@ void Body::ClearTorque()
 
 void Body::IntegrateLinear(const float dt)
 {
+	if (IsStatic())
+	{
+		return;
+	}
 	acceleration = totalForce * invMass;
 	velocity += acceleration * dt;
 	position += velocity * dt;
@@ -60,6 +67,10 @@ void Body::IntegrateLinear(const float dt)
 
 void Body::IntegrateAngular(const float dt)
 {
+	if (IsStatic())
+	{
+		return;
+	}
 	angularVelocity = sumTorque * invI;
 	angularVelocity += angularAcceleration * dt;
 	rotation += angularVelocity * dt;
@@ -71,4 +82,20 @@ void Body::Update(const float dt)
 	IntegrateLinear(dt);
 	IntegrateAngular(dt);
 	shape->UpdateVertices(this->position, this->rotation);
+}
+
+bool Body::IsStatic() const
+{
+	const float epsilon = 0.005f;
+	return fabs(invMass - 0.0f) < epsilon;
+}
+
+void Body::ApplyImpulse(const Vec2 j)
+{
+	if (IsStatic())
+	{
+		return;
+	}
+
+	velocity += j * invMass;
 }

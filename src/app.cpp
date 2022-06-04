@@ -38,7 +38,7 @@ void App::Setup()
 	positionMouseY = 0;
 
 	Circle *circle = new Circle(200);
-	Body *c = new Body(circle, 600, 400, 1);
+	Body *c = new Body(circle, 600, 400, 0.0);
 	bodies.push_back(c);
 }
 
@@ -60,7 +60,11 @@ void App::ProcessInput()
 			break;
 		case SDL_MOUSEBUTTONUP:
 		{
-			pushForce = Vec2();
+			int mouseX, mouseY;
+			SDL_GetMouseState(&mouseX, &mouseY);
+			Circle *circle = new Circle(40);
+			Body *c = new Body(circle, positionMouseX, positionMouseY, 1);
+			bodies.push_back(c);
 			break;
 		}
 		case SDL_MOUSEBUTTONDOWN:
@@ -103,24 +107,26 @@ void App::Update()
 
 	for (auto body : bodies)
 	{
-		// Vec2 weightForce = Force::GenWeightForce(body, GRAVITY * METER_PER_PIXEL);
-		// body->AddForce(weightForce);
+		Vec2 weightForce = Force::GenWeightForce(body, GRAVITY * METER_PER_PIXEL);
+		body->AddForce(weightForce);
 
-		float torque = 40.0 * METER_PER_PIXEL;
-		body->AddTorque(torque);
+		// float torque = 40.0 * METER_PER_PIXEL;
+		// body->AddTorque(torque);
 	}
 
-	Circle *circle = new Circle(170);
-	Body *c = new Body(circle, positionMouseX, positionMouseY, 1);
-	graphics.DrawBody(c, drawColor);
 	Contact contact;
-	for (auto body : bodies)
+	for (int i = 0; i < bodies.size(); i++)
 	{
-		if (Collision::IsColliding(body, c, contact))
+		for (int j = i +1; j < bodies.size(); j++)
 		{
-			graphics.DrawFilledCircle(contact.start.x, contact.start.y, 3, collisionColor);
-			graphics.DrawFilledCircle(contact.end.x, contact.end.y, 3, collisionColor);
-			graphics.DrawLine(contact.start.x, contact.start.y, contact.start.x + contact.normal.x * 20, contact.start.y + contact.normal.y*20, collisionColor);
+			if (Collision::IsColliding(bodies[i], bodies[j], contact))
+			{
+				contact.ResolveCollision();
+
+				graphics.DrawFilledCircle(contact.start.x, contact.start.y, 3, collisionColor);
+				graphics.DrawFilledCircle(contact.end.x, contact.end.y, 3, collisionColor);
+				graphics.DrawLine(contact.start.x, contact.start.y, contact.start.x + contact.normal.x * 20, contact.start.y + contact.normal.y * 20, collisionColor);
+			}
 		}
 	}
 
