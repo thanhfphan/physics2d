@@ -16,7 +16,8 @@ App::App()
 
 App::~App()
 {
-	for (auto body : bodies){
+	for (auto body : bodies)
+	{
 		delete body;
 	}
 	Log::Info("App destructor had called");
@@ -36,20 +37,8 @@ void App::Setup()
 	positionMouseX = 0;
 	positionMouseY = 0;
 
-	Box *box = new Box(400, 250);
-	Body *b = new Body(box, 650, 400, 1);
-	bodies.push_back(b);
-
-	std::vector<Vec2> localVertices;
-	localVertices.push_back(Vec2(-100, 300));
-	localVertices.push_back(Vec2(-200, -500));
-	localVertices.push_back(Vec2(300, 0));
-	Polygon* polygon = new Polygon(localVertices);
-	Body* p = new Body(polygon, 800,300, 1);
-	bodies.push_back(p);
-
-	Circle* circle = new Circle(200);
-	Body *c = new Body(circle, 700, 600, 1);
+	Circle *circle = new Circle(200);
+	Body *c = new Body(circle, 600, 400, 1);
 	bodies.push_back(c);
 }
 
@@ -117,8 +106,22 @@ void App::Update()
 		// Vec2 weightForce = Force::GenWeightForce(body, GRAVITY * METER_PER_PIXEL);
 		// body->AddForce(weightForce);
 
-		float torque = 40.0 * METER_PER_PIXEL; 
+		float torque = 40.0 * METER_PER_PIXEL;
 		body->AddTorque(torque);
+	}
+
+	Circle *circle = new Circle(170);
+	Body *c = new Body(circle, positionMouseX, positionMouseY, 1);
+	graphics.DrawBody(c, drawColor);
+	Contact contact;
+	for (auto body : bodies)
+	{
+		if (Collision::IsColliding(body, c, contact))
+		{
+			graphics.DrawFilledCircle(contact.start.x, contact.start.y, 3, collisionColor);
+			graphics.DrawFilledCircle(contact.end.x, contact.end.y, 3, collisionColor);
+			graphics.DrawLine(contact.start.x, contact.start.y, contact.start.x + contact.normal.x * 20, contact.start.y + contact.normal.y*20, collisionColor);
+		}
 	}
 
 	for (auto body : bodies)

@@ -5,55 +5,70 @@
 #include <limits>
 #include <iostream>
 
-bool Collision::CircleToCircle(Body *a, Body *b)
+bool Collision::IsColliding(Body *a, Body *b, Contact &contact)
 {
-	if (!a->shape || !a->shape)
+	if (!a->shape || !b->shape)
 	{
 		Log::Error("can't check collison between pylygon vs polygon because shape is null");
 		return false;
 	}
-	if (a->shape->GetType() != "circle" || b->shape->GetType() != "circle")
+
+	std::string aType = a->shape->GetType();
+	std::string bType = b->shape->GetType();
+
+	if (aType == "circle" && bType == "circle")
 	{
-		Log::Error("can't check collison between circle vs circle because wrong type");
-		return false;
+		return CircleToCircle(a, b, contact);
+	}
+	else if (aType == "polygon" && bType == "polygon")
+	{
+		return PolygonToPylygon(a, b, contact);
 	}
 
+	Log::Error("IsColliding between " + aType + " vs " + bType + " is not supported");
+
+	return false;
+}
+
+bool Collision::CircleToCircle(Body *a, Body *b, Contact &contact)
+{
 	Circle *ca = static_cast<Circle *>(a->shape);
 	Circle *cb = static_cast<Circle *>(b->shape);
 
 	Vec2 distance = b->position - a->position;
-	if (distance.Magnitude() < (ca->radius + cb->radius))
+	float radiusSum = ca->radius + cb->radius;
+
+	bool isCollide = distance.MagnitudeSquared() < (radiusSum * radiusSum);
+	if (!isCollide)
 	{
-		return true;
+		return false;
 	}
 
-	return false;
+	contact.a = a;
+	contact.b = b;
+	Vec2 ab = b->position - a->position;
+	contact.normal = ab.UnitVector();
+	contact.start = b->position - contact.normal * cb->radius;
+	contact.end = a->position + contact.normal * ca->radius;
+	contact.depth = (contact.end - contact.start).Magnitude();
+
+	return true;
 }
-bool Collision::PolygonToPylygon(Body *ba, Body *bb)
-{
-	if (!ba->shape || !ba->shape)
-	{
-		Log::Error("can't check collison between pylygon vs polygon because shape is null");
-		return false;
-	}
-	if (ba->shape->GetType() != "polygon" || bb->shape->GetType() != "polygon")
-	{
-		Log::Error("can't check collison between pylygon vs polygon because wrong type");
-		return false;
-	}
 
-	Polygon *a = static_cast<Polygon *>(ba->shape);
-	Polygon *b = static_cast<Polygon *>(bb->shape);
+bool Collision::PolygonToPylygon(Body *a, Body *b, Contact &contact)
+{
+	Polygon *pa = static_cast<Polygon *>(a->shape);
+	Polygon *pb = static_cast<Polygon *>(b->shape);
 
 	float separation = std::numeric_limits<float>::lowest();
-	for (int i = 0; i < a->worldVertices.size(); i++)
+	for (int i = 0; i < pa->worldVertices.size(); i++)
 	{
-		Vec2 va = a->worldVertices[i];
-		Vec2 normal = a->GetEdge(i).Normal();
+		Vec2 va = pa->worldVertices[i];
+		Vec2 normal = pa->GetEdge(i).Normal();
 		float minStep = std::numeric_limits<float>::max();
-		for (int j = 0; j < b->worldVertices.size(); j++)
+		for (int j = 0; j < pb->worldVertices.size(); j++)
 		{
-			Vec2 vb = b->worldVertices[j];
+			Vec2 vb = pb->worldVertices[j];
 			float proj = (vb - va).Dot(normal);
 			minStep = std::min(minStep, proj);
 		}
