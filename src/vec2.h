@@ -1,5 +1,7 @@
 #pragma once
 
+#include "string"
+
 struct Vec2
 {
 	float x, y;
@@ -29,4 +31,6 @@ struct Vec2
 	float Cross(const Vec2 &v) const;
 	float Magnitude() const;
 	float MagnitudeSquared() const;
+
+	std::string ToString() const;
 };

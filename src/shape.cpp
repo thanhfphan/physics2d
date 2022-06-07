@@ -115,7 +115,7 @@ std::string Polygon::GetType() const
 // note: without mass
 float Polygon::GetMomentOfInertia() const
 {
-	return 0.08 * 50 * 50 + 100 * 100; //FIXME: remove hardcode
+	return 0.08 * (50 * 50 + 60 * 60); //FIXME: remove hardcode
 }
 
 void Polygon::UpdateVertices(Vec2 position, float angle)

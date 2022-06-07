@@ -131,3 +131,7 @@ float Vec2::MagnitudeSquared() const
 {
 	return x * x + y * y;
 }
+
+std::string Vec2::ToString() const{
+	return "(" + std::to_string(x) + "," + std::to_string(y) + ")";
+}
