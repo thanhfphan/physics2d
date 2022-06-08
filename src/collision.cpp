@@ -7,7 +7,8 @@
 
 bool Collision::IsColliding(Body *a, Body *b, Contact &contact)
 {
-	if(a->IsStatic() && b->IsStatic()){
+	if (a->IsStatic() && b->IsStatic())
+	{
 		return false;
 	}
 
@@ -71,19 +72,21 @@ bool Collision::PolygonToPylygon(Body *a, Body *b, Contact &contact)
 		{
 			Vec2 vj = pb->worldVertices[j];
 			float proj = (vj - vi).Dot(normal);
-			if (proj < minStep){
+			if (proj < minStep)
+			{
 				minStep = proj;
 				minV = vj;
 			}
 		}
-		if (minStep > separationAB){
+		if (minStep > separationAB)
+		{
 			separationAB = minStep;
 			normalAB = normal;
 			pointAB = minV;
 		}
-
 	}
-	if (separationAB >= 0){
+	if (separationAB >= 0)
+	{
 		return false;
 	}
 
@@ -100,32 +103,40 @@ bool Collision::PolygonToPylygon(Body *a, Body *b, Contact &contact)
 		{
 			Vec2 vj = pa->worldVertices[j];
 			float proj = (vj - vi).Dot(normal);
-			if (proj < minStep){
+			if (proj < minStep)
+			{
 				minStep = proj;
 				minV = vj;
 			}
 		}
-		if (minStep > separationBA){
+		if (minStep > separationBA)
+		{
 			separationBA = minStep;
 			normalBA = normal;
 			pointBA = minV;
 		}
 	}
-	if(separationBA >= 0){
+	if (separationBA >= 0)
+	{
 		return false;
 	}
 
-	if(separationAB > separationBA){
+	if (separationAB > separationBA)
+	{
 		contact.depth = -separationAB;
 		contact.normal = normalAB;
 		contact.start = pointAB;
 		contact.end = pointAB + contact.normal * contact.depth;
-	}else{
+	}
+	else
+	{
 		contact.depth = -separationBA;
 		contact.normal = -normalBA;
 		contact.start = pointBA - contact.normal * contact.depth;
 		contact.end = pointBA;
 	}
+	contact.a = a;
+	contact.b = b;
 
 	return true;
 }

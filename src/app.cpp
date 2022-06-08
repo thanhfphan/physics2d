@@ -39,8 +39,15 @@ void App::Setup()
 
 	std::vector<Vec2> verices = {Vec2(-100, 100), Vec2(-100, -100), Vec2(100, -100), Vec2(100, 100)};
 	Polygon *polygon = new Polygon(verices);
-	Body *b = new Body(polygon, 600, 400, 1);
+	Body *b = new Body(polygon, 720, 400, 0);
+	b->rotation = 0.4;
 	bodies.push_back(b);
+
+	std::vector<Vec2> vericesFloor = {Vec2(-700, 25), Vec2(-700, -25), Vec2(700, -25), Vec2(700, 25)};
+	Polygon *polygonFloor = new Polygon(vericesFloor);
+	Body *floor = new Body(polygonFloor, 720, 700, 0);
+	floor->restitution = 0.2f;
+	bodies.push_back(floor);
 }
 
 void App::ProcessInput()
@@ -61,11 +68,12 @@ void App::ProcessInput()
 			break;
 		case SDL_MOUSEBUTTONUP:
 		{
-			// int mouseX, mouseY;
-			// SDL_GetMouseState(&mouseX, &mouseY);
-			// Circle *circle = new Circle(40);
-			// Body *c = new Body(circle, positionMouseX, positionMouseY, 1);
-			// bodies.push_back(c);
+			int mouseX, mouseY;
+			SDL_GetMouseState(&mouseX, &mouseY);
+			std::vector<Vec2> vericesBox= {Vec2(-20, 20), Vec2(-20, -20), Vec2(20, -20), Vec2(20, 20)};
+			Polygon *sbox = new Polygon(vericesBox);
+			Body *box = new Body(sbox, mouseX, mouseY, 1);
+			bodies.push_back(box);
 			break;
 		}
 		case SDL_MOUSEBUTTONDOWN:
@@ -108,13 +116,26 @@ void App::Update()
 
 	for (auto body : bodies)
 	{
-		// Vec2 weightForce = Force::GenWeightForce(body, GRAVITY * METER_PER_PIXEL);
-		// body->AddForce(weightForce);
+		Vec2 weightForce = Force::GenWeightForce(body, GRAVITY * METER_PER_PIXEL);
+		body->AddForce(weightForce);
 
-		float torque = 10.0 * METER_PER_PIXEL;
-		body->AddTorque(torque);
+		// float torque = 10.0 * METER_PER_PIXEL;
+		// body->AddTorque(torque);
 	}
 
+	for (int i = 0; i < bodies.size(); i++)
+	{
+		for (int j = i + 1; j < bodies.size(); j++)
+		{
+			Contact contact;
+			Body *a = bodies[i];
+			Body *b = bodies[j];
+			if (Collision::IsColliding(a, b, contact))
+			{
+				contact.ResolveCollision();
+			}
+		}
+	}
 	for (auto body : bodies)
 	{
 		body->Update(deltaTime);
@@ -123,28 +144,9 @@ void App::Update()
 
 void App::Render()
 {
-	std::vector<Vec2> verices = {Vec2(-100, 100), Vec2(-100, -100), Vec2(100, -100), Vec2(100, 100)};
-	Polygon *polygon = new Polygon(verices);
-	Body *b = new Body(polygon, positionMouseX, positionMouseY, 1);
-	b->rotation = 0.4;
-	b->shape->UpdateVertices(b->position, b->rotation);
-
 	for (auto body : bodies)
 	{
-		Contact contact;
-		if (Collision::IsColliding(body, b, contact))
-		{
-			graphics.DrawBody(body, collisionColor);
-			graphics.DrawBody(b, collisionColor);
-			graphics.DrawFilledCircle(contact.start.x, contact.start.y, 3, collisionColor);
-			graphics.DrawFilledCircle(contact.end.x, contact.end.y, 3, collisionColor);
-			graphics.DrawLine(contact.start.x, contact.start.y, contact.start.x + contact.normal.x * 20, contact.start.y + contact.normal.y * 20, collisionColor);
-		}
-		else
-		{
-			graphics.DrawBody(body, drawColor);
-			graphics.DrawBody(b, drawColor);
-		}
+		graphics.DrawBody(body, drawColor);
 	}
 
 	graphics.Render();
