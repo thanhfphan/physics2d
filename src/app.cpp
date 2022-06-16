@@ -1,6 +1,5 @@
 #include <iostream>
 #include "app.h"
-#include "log.h"
 #include "graphics.h"
 #include "SDL2/SDL.h"
 #include "shape.h"
@@ -8,6 +7,7 @@
 #include "collision.h"
 #include "const.h"
 #include "force.h"
+#include "TK/Log.h"
 
 App::App()
 {
@@ -25,7 +25,6 @@ App::~App()
 
 void App::Setup()
 {
-	std::cout << "App:Setup had called ..." << std::endl;
 	isRunning = true;
 	graphics.OpenWindow();
 	backgroundColor = 0xFF0F0721;
@@ -48,6 +47,7 @@ void App::Setup()
 	Body *floor = new Body(polygonFloor, 720, 700, 0);
 	floor->restitution = 0.2f;
 	bodies.push_back(floor);
+	Log::Info("App:Setup had called ...");
 }
 
 void App::ProcessInput()

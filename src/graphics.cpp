@@ -1,5 +1,5 @@
 #include "graphics.h"
-#include "log.h"
+#include "TK/Log.h"
 #include "shape.h"
 
 Graphics::Graphics() {}
