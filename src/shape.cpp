@@ -69,7 +69,7 @@ std::string Box::GetType() const
 }
 void Box::UpdateVertices(Vec2 position, float angle)
 {
-	for (int i = 0; i < localVertices.size(); i++)
+	for (size_t i = 0; i < localVertices.size(); i++)
 	{
 		worldVertices[i] = localVertices[i].Rotate(angle);
 		worldVertices[i] += position;
@@ -120,7 +120,7 @@ float Polygon::GetMomentOfInertia() const
 
 void Polygon::UpdateVertices(Vec2 position, float angle)
 {
-	for (int i = 0; i < localVertices.size(); i++)
+	for (size_t i = 0; i < localVertices.size(); i++)
 	{
 		worldVertices[i] = localVertices[i].Rotate(angle);
 		worldVertices[i] += position;

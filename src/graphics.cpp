@@ -83,11 +83,11 @@ void Graphics::DrawRectangle(int x1, int y1, int x2, int y2, Uint32 color)
 
 void Graphics::DrawPolygon(float x, float y, const std::vector<Vec2> &vertices, Uint32 color)
 {
-	int n = vertices.size();
+	size_t n = vertices.size();
 	std::vector<Sint16> vx;
 	std::vector<Sint16> vy;
 
-	for (int i = 0; i < n; i++)
+	for (size_t i = 0; i < n; i++)
 	{
 		vx.push_back(vertices[i].x);
 		vy.push_back(vertices[i].y);

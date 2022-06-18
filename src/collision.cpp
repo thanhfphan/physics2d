@@ -62,13 +62,13 @@ bool Collision::PolygonToPylygon(Body *a, Body *b, Contact &contact)
 	float separationAB = std::numeric_limits<float>::lowest();
 	Vec2 normalAB;
 	Vec2 pointAB;
-	for (int i = 0; i < pa->worldVertices.size(); i++)
+	for (size_t i = 0; i < pa->worldVertices.size(); i++)
 	{
 		Vec2 vi = pa->worldVertices[i];
 		Vec2 normal = pa->GetEdge(i).Normal();
 		float minStep = std::numeric_limits<float>::max();
 		Vec2 minV;
-		for (int j = 0; j < pb->worldVertices.size(); j++)
+		for (size_t j = 0; j < pb->worldVertices.size(); j++)
 		{
 			Vec2 vj = pb->worldVertices[j];
 			float proj = (vj - vi).Dot(normal);
@@ -93,13 +93,13 @@ bool Collision::PolygonToPylygon(Body *a, Body *b, Contact &contact)
 	float separationBA = std::numeric_limits<float>::lowest();
 	Vec2 normalBA;
 	Vec2 pointBA;
-	for (int i = 0; i < pb->worldVertices.size(); i++)
+	for (size_t i = 0; i < pb->worldVertices.size(); i++)
 	{
 		Vec2 vi = pb->worldVertices[i];
 		Vec2 normal = pb->GetEdge(i).Normal();
 		float minStep = std::numeric_limits<float>::max();
 		Vec2 minV;
-		for (int j = 0; j < pa->worldVertices.size(); j++)
+		for (size_t j = 0; j < pa->worldVertices.size(); j++)
 		{
 			Vec2 vj = pa->worldVertices[j];
 			float proj = (vj - vi).Dot(normal);

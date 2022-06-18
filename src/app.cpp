@@ -38,13 +38,13 @@ void App::Setup()
 
 	std::vector<Vec2> verices = {Vec2(-100, 100), Vec2(-100, -100), Vec2(100, -100), Vec2(100, 100)};
 	Polygon *polygon = new Polygon(verices);
-	Body *b = new Body(polygon, 720, 400, 0);
+	Body *b = new Body(polygon, graphics.Width() / 2, graphics.Height() / 2 - 100, 0);
 	b->rotation = 0.4;
 	bodies.push_back(b);
 
 	std::vector<Vec2> vericesFloor = {Vec2(-700, 25), Vec2(-700, -25), Vec2(700, -25), Vec2(700, 25)};
 	Polygon *polygonFloor = new Polygon(vericesFloor);
-	Body *floor = new Body(polygonFloor, 720, 700, 0);
+	Body *floor = new Body(polygonFloor, graphics.Width() / 2, graphics.Height() - 200, 0);
 	floor->restitution = 0.2f;
 	bodies.push_back(floor);
 	Log::Info("App:Setup had called ...");
@@ -70,7 +70,7 @@ void App::ProcessInput()
 		{
 			int mouseX, mouseY;
 			SDL_GetMouseState(&mouseX, &mouseY);
-			std::vector<Vec2> vericesBox= {Vec2(-20, 20), Vec2(-20, -20), Vec2(20, -20), Vec2(20, 20)};
+			std::vector<Vec2> vericesBox = {Vec2(-20, 20), Vec2(-20, -20), Vec2(20, -20), Vec2(20, 20)};
 			Polygon *sbox = new Polygon(vericesBox);
 			Body *box = new Body(sbox, mouseX, mouseY, 1);
 			bodies.push_back(box);
@@ -123,9 +123,9 @@ void App::Update()
 		// body->AddTorque(torque);
 	}
 
-	for (int i = 0; i < bodies.size(); i++)
+	for (size_t i = 0; i < bodies.size(); i++)
 	{
-		for (int j = i + 1; j < bodies.size(); j++)
+		for (size_t j = i + 1; j < bodies.size(); j++)
 		{
 			Contact contact;
 			Body *a = bodies[i];

@@ -31,6 +31,11 @@ namespace TK
 			return "\033[1;31m";
 		}
 
+		static std::string make_yellow()
+		{
+			return "\033[1;33m";
+		}
+
 		static std::string make_cyan()
 		{
 			return "\033[1;36m";
@@ -54,7 +59,7 @@ namespace TK
 
 		static void Warn(const std::string message)
 		{
-			std::cout << get_time() << make_cyan() << " [WARN]: " << reset_color() << message << std::endl;
+			std::cout << get_time() << make_yellow() << " [WARN]: " << reset_color() << message << std::endl;
 		}
 
 		static void Error(const std::string message)
