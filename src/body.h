@@ -37,4 +37,5 @@ struct Body
 	void Update(const float dt);
 	bool IsStatic() const;
 	void ApplyImpulse(const Vec2 j);
+	void ApplyImpulse(const Vec2 j, const Vec2 r);
 };

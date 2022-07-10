@@ -56,6 +56,7 @@ bool Collision::CircleToCircle(Body *a, Body *b, Contact &contact)
 
 bool Collision::PolygonToPylygon(Body *a, Body *b, Contact &contact)
 {
+	
 	Polygon *pa = static_cast<Polygon *>(a->shape);
 	Polygon *pb = static_cast<Polygon *>(b->shape);
 
@@ -121,6 +122,8 @@ bool Collision::PolygonToPylygon(Body *a, Body *b, Contact &contact)
 		return false;
 	}
 
+	contact.a = a;
+	contact.b = b;
 	if (separationAB > separationBA)
 	{
 		contact.depth = -separationAB;
@@ -135,8 +138,6 @@ bool Collision::PolygonToPylygon(Body *a, Body *b, Contact &contact)
 		contact.start = pointBA - contact.normal * contact.depth;
 		contact.end = pointBA;
 	}
-	contact.a = a;
-	contact.b = b;
 
 	return true;
 }

@@ -32,21 +32,19 @@ void App::Setup()
 	collisionColor = 0xFF0000FF;
 	pushForce = Vec2();
 
-	// custom
-	positionMouseX = 0;
-	positionMouseY = 0;
-
-	std::vector<Vec2> verices = {Vec2(-100, 100), Vec2(-100, -100), Vec2(100, -100), Vec2(100, 100)};
-	Polygon *polygon = new Polygon(verices);
-	Body *b = new Body(polygon, graphics.Width() / 2, graphics.Height() / 2 - 100, 0);
-	b->rotation = 0.4;
-	bodies.push_back(b);
-
 	std::vector<Vec2> vericesFloor = {Vec2(-700, 25), Vec2(-700, -25), Vec2(700, -25), Vec2(700, 25)};
 	Polygon *polygonFloor = new Polygon(vericesFloor);
 	Body *floor = new Body(polygonFloor, graphics.Width() / 2, graphics.Height() - 200, 0);
 	floor->restitution = 0.2f;
 	bodies.push_back(floor);
+
+	std::vector<Vec2> verices = {Vec2(-100, 100), Vec2(-100, -100), Vec2(100, -100), Vec2(100, 100)};
+	Polygon *polygon = new Polygon(verices);
+	Body *b = new Body(polygon, graphics.Width() / 2, graphics.Height() / 2 - 100, 0);
+	b->rotation = 0.4;
+	b->restitution = 0.5f;
+	bodies.push_back(b);
+
 	Log::Info("App:Setup had called ...");
 }
 
@@ -82,11 +80,6 @@ void App::ProcessInput()
 		}
 		case SDL_MOUSEMOTION:
 		{
-			int mouseX, mouseY;
-			SDL_GetMouseState(&mouseX, &mouseY);
-			positionMouseX = mouseX;
-			positionMouseY = mouseY;
-
 			break;
 		}
 		default:
@@ -123,6 +116,11 @@ void App::Update()
 		// body->AddTorque(torque);
 	}
 
+	for (auto body : bodies)
+	{
+		body->Update(deltaTime);
+	}
+
 	for (size_t i = 0; i < bodies.size(); i++)
 	{
 		for (size_t j = i + 1; j < bodies.size(); j++)
@@ -133,12 +131,11 @@ void App::Update()
 			if (Collision::IsColliding(a, b, contact))
 			{
 				contact.ResolveCollision();
+				graphics.DrawFilledCircle(contact.start.x, contact.start.y, 5, collisionColor);
+				graphics.DrawFilledCircle(contact.end.x, contact.end.y, 5, collisionColor);
+				graphics.DrawLine(contact.start.x, contact.start.y, contact.start.x + contact.normal.x * 15, contact.start.y + contact.normal.y * 15, 0xFFFF00FF);
 			}
 		}
-	}
-	for (auto body : bodies)
-	{
-		body->Update(deltaTime);
 	}
 }
 

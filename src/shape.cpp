@@ -52,10 +52,10 @@ Box::Box(int width, int height)
 	localVertices.push_back(Vec2(width/2, -height/2));
 	localVertices.push_back(Vec2(width/2, height/2));
 
-	worldVertices.push_back(Vec2(-width/2, height/2));
-	worldVertices.push_back(Vec2(-width/2, -height/2));
-	worldVertices.push_back(Vec2(width/2, -height/2));
-	worldVertices.push_back(Vec2(width/2, height/2));
+	for (auto v : localVertices){
+		worldVertices.push_back(v);
+	}
+	
 	Log::Info("box constructor has called");
 }
 Box::~Box()

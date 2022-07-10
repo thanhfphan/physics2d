@@ -15,8 +15,6 @@ private:
 	std::vector<Body *> bodies;
 	Vec2 pushForce;
 
-	// custom
-	int positionMouseX, positionMouseY;
 public:
 	App();
 	~App();

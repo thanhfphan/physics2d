@@ -59,9 +59,11 @@ void Body::IntegrateLinear(const float dt)
 	{
 		return;
 	}
+
 	acceleration = totalForce * invMass;
 	velocity += acceleration * dt;
 	position += velocity * dt;
+
 	ClearForce();
 }
 
@@ -71,9 +73,11 @@ void Body::IntegrateAngular(const float dt)
 	{
 		return;
 	}
-	angularVelocity = sumTorque * invI;
+
+	angularAcceleration= sumTorque * invI;
 	angularVelocity += angularAcceleration * dt;
 	rotation += angularVelocity * dt;
+
 	ClearTorque();
 }
 
@@ -98,4 +102,15 @@ void Body::ApplyImpulse(const Vec2 j)
 	}
 
 	velocity += j * invMass;
+}
+
+void Body::ApplyImpulse(const Vec2 j, const Vec2 r)
+{
+	if (IsStatic())
+	{
+		return;
+	}
+
+	velocity += j * invMass;
+	angularVelocity += r.Cross(j) * invI;
 }
