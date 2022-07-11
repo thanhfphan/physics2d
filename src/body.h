@@ -14,6 +14,7 @@ struct Body
 	float invI;
 
 	float restitution;
+	float friction;
 
 	Vec2 totalForce;
 

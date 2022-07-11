@@ -45,6 +45,10 @@ void App::Setup()
 	b->restitution = 0.5f;
 	bodies.push_back(b);
 
+	// Circle *c1 = new Circle(150);
+	// Body *b1 = new Body(c1, graphics.Width() / 2, graphics.Height() / 2 - 100, 0);
+	// bodies.push_back(b1);
+
 	Log::Info("App:Setup had called ...");
 }
 
@@ -72,6 +76,9 @@ void App::ProcessInput()
 			Polygon *sbox = new Polygon(vericesBox);
 			Body *box = new Body(sbox, mouseX, mouseY, 1);
 			bodies.push_back(box);
+			// Circle *c = new Circle(30);
+			// Body *b = new Body(c, mouseX, mouseY, 1);
+			// bodies.push_back(b);
 			break;
 		}
 		case SDL_MOUSEBUTTONDOWN:

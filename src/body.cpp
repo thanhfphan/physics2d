@@ -15,6 +15,7 @@ Body::Body(Shape *shape, float x, float y, float m)
 	invI = I != 0.0f ? 1.0 / I : 0.0f;
 
 	restitution = 1.0f;
+	friction = 0.7f;
 
 	totalForce = Vec2();
 	velocity = Vec2();
