@@ -32,22 +32,22 @@ void App::Setup()
 	collisionColor = 0xFF0000FF;
 	pushForce = Vec2();
 
-	std::vector<Vec2> vericesFloor = {Vec2(-700, 25), Vec2(-700, -25), Vec2(700, -25), Vec2(700, 25)};
-	Polygon *polygonFloor = new Polygon(vericesFloor);
-	Body *floor = new Body(polygonFloor, graphics.Width() / 2, graphics.Height() - 200, 0);
-	floor->restitution = 0.2f;
-	bodies.push_back(floor);
+	// std::vector<Vec2> vericesFloor = {Vec2(-700, 25), Vec2(-700, -25), Vec2(700, -25), Vec2(700, 25)};
+	// Polygon *polygonFloor = new Polygon(vericesFloor);
+	// Body *floor = new Body(polygonFloor, graphics.Width() / 2, graphics.Height() - 200, 0);
+	// floor->restitution = 0.2f;
+	// bodies.push_back(floor);
 
 	std::vector<Vec2> verices = {Vec2(-100, 100), Vec2(-100, -100), Vec2(100, -100), Vec2(100, 100)};
 	Polygon *polygon = new Polygon(verices);
-	Body *b = new Body(polygon, graphics.Width() / 2, graphics.Height() / 2 - 100, 0);
+	Body *b = new Body(polygon, graphics.Width() / 2, graphics.Height() / 2 - 100, 1);
 	b->rotation = 0.4;
 	b->restitution = 0.5f;
 	bodies.push_back(b);
 
-	// Circle *c1 = new Circle(150);
-	// Body *b1 = new Body(c1, graphics.Width() / 2, graphics.Height() / 2 - 100, 0);
-	// bodies.push_back(b1);
+	Circle *c1 = new Circle(75);
+	Body *b1 = new Body(c1, graphics.Width() / 2, graphics.Height() / 2 - 100, 1);
+	bodies.push_back(b1);
 
 	Log::Info("App:Setup had called ...");
 }
@@ -70,12 +70,12 @@ void App::ProcessInput()
 			break;
 		case SDL_MOUSEBUTTONUP:
 		{
-			int mouseX, mouseY;
-			SDL_GetMouseState(&mouseX, &mouseY);
-			std::vector<Vec2> vericesBox = {Vec2(-20, 20), Vec2(-20, -20), Vec2(20, -20), Vec2(20, 20)};
-			Polygon *sbox = new Polygon(vericesBox);
-			Body *box = new Body(sbox, mouseX, mouseY, 1);
-			bodies.push_back(box);
+			// int mouseX, mouseY;
+			// SDL_GetMouseState(&mouseX, &mouseY);
+			// std::vector<Vec2> vericesBox = {Vec2(-20, 20), Vec2(-20, -20), Vec2(20, -20), Vec2(20, 20)};
+			// Polygon *sbox = new Polygon(vericesBox);
+			// Body *box = new Body(sbox, mouseX, mouseY, 1);
+			// bodies.push_back(box);
 			// Circle *c = new Circle(30);
 			// Body *b = new Body(c, mouseX, mouseY, 1);
 			// bodies.push_back(b);
@@ -87,6 +87,10 @@ void App::ProcessInput()
 		}
 		case SDL_MOUSEMOTION:
 		{
+			int mouseX, mouseY;
+			SDL_GetMouseState(&mouseX, &mouseY);
+			bodies[bodies.size() - 1]->position.x = mouseX;
+			bodies[bodies.size() - 1]->position.y = mouseY;
 			break;
 		}
 		default:
@@ -114,21 +118,21 @@ void App::Update()
 	timeInPreviousFrame = SDL_GetTicks();
 	// End - Time per frame
 
-	for (auto body : bodies)
-	{
-		Vec2 weightForce = Force::GenWeightForce(body, GRAVITY * METER_PER_PIXEL);
-		body->AddForce(weightForce);
+	// for (auto body : bodies)
+	// {
+		// Vec2 weightForce = Force::GenWeightForce(body, GRAVITY * METER_PER_PIXEL);
+		// body->AddForce(weightForce);
 
 		// float torque = 10.0 * METER_PER_PIXEL;
 		// body->AddTorque(torque);
-	}
+	// }
 
 	for (auto body : bodies)
 	{
 		body->Update(deltaTime);
 	}
 
-	for (size_t i = 0; i < bodies.size(); i++)
+	for (size_t i = 0; i < bodies.size() - 1; i++)
 	{
 		for (size_t j = i + 1; j < bodies.size(); j++)
 		{
@@ -137,7 +141,7 @@ void App::Update()
 			Body *b = bodies[j];
 			if (Collision::IsColliding(a, b, contact))
 			{
-				contact.ResolveCollision();
+				// contact.ResolveCollision();
 				graphics.DrawFilledCircle(contact.start.x, contact.start.y, 5, collisionColor);
 				graphics.DrawFilledCircle(contact.end.x, contact.end.y, 5, collisionColor);
 				graphics.DrawLine(contact.start.x, contact.start.y, contact.start.x + contact.normal.x * 15, contact.start.y + contact.normal.y * 15, 0xFFFF00FF);

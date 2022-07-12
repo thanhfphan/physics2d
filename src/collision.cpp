@@ -12,21 +12,118 @@ bool Collision::IsColliding(Body *a, Body *b, Contact &contact)
 		return false;
 	}
 
-	std::string aType = a->shape->GetType();
-	std::string bType = b->shape->GetType();
+	bool aIsCircle = a->shape->GetType() == "circle";
+	bool bIsCircle = b->shape->GetType() == "circle";
+	bool aIsPolygon = a->shape->GetType() == "polygon";
+	bool bIsPolygon = b->shape->GetType() == "polygon";
 
-	if (aType == "circle" && bType == "circle")
+	if (aIsCircle && bIsCircle)
 	{
 		return CircleToCircle(a, b, contact);
 	}
-	else if (aType == "polygon" && bType == "polygon")
+	else if (aIsPolygon && bIsPolygon)
 	{
 		return PolygonToPylygon(a, b, contact);
 	}
+	else if (aIsPolygon && bIsCircle)
+	{
+		return PolygonToCircle(a, b, contact);
+	}
+	else if (aIsCircle && bIsPolygon)
+	{
+		return PolygonToCircle(b, a, contact);
+	}
 
-	Log::Error("IsColliding between " + aType + " vs " + bType + " is not supported");
+	Log::Error("IsColliding between " + a->shape->GetType() + " vs " + b->shape->GetType() + " is not supported");
 
 	return false;
+}
+
+bool Collision::PolygonToCircle(Body *a, Body *b, Contact &contact)
+{
+	Polygon *polygon = static_cast<Polygon *>(a->shape);
+	Circle *circle = static_cast<Circle *>(b->shape);
+
+	size_t index = 0;
+	float distance = 0.0f;
+	float minD = std::numeric_limits<float>::max();
+	bool isOutside = false;
+	size_t indexI = 0;
+	float distanceI = 0.0f;
+	float maxDI = std::numeric_limits<float>::lowest();
+	
+	for (size_t i = 0; i < polygon->worldVertices.size(); i++)
+	{
+		Vec2 normal = polygon->GetEdge(i).Normal();
+		float d = (b->position - polygon->worldVertices[i]).Dot(normal);
+		if (d > 0 && d < minD)
+		{
+			index = i;
+			distance = d;
+			minD = d;
+			isOutside = true;
+		}else {
+			if (d > maxDI){
+				maxDI = d;
+				indexI = i;
+				distanceI = d*-1;
+			}
+		}
+	}
+
+	if (isOutside)
+	{
+		size_t nextIndex = (index + 1) % polygon->worldVertices.size();
+		Vec2 edge = polygon->GetEdge(index);
+		float l = edge.UnitVector().Dot(b->position - polygon->worldVertices[index]);
+		if (l < 0)
+		{
+			float dp2e = (b->position - polygon->worldVertices[index]).Magnitude();
+			if (circle->radius < dp2e)
+			{
+				return false;
+			}
+			contact.depth = circle->radius - dp2e;
+			contact.normal = (b->position - polygon->worldVertices[index]).UnitVector();
+			contact.start = b->position - contact.normal * circle->radius;
+			contact.end = b->position - contact.normal * (circle->radius - contact.depth);
+		}
+		else if (l > edge.Magnitude())
+		{
+			float dp2ne = (b->position - polygon->worldVertices[nextIndex]).Magnitude();
+			if (circle->radius < dp2ne)
+			{
+				return false;
+			}
+			contact.depth = circle->radius - dp2ne;
+			contact.normal = (b->position - polygon->worldVertices[nextIndex]).UnitVector();
+			contact.start = b->position - contact.normal * circle->radius;
+			contact.end = b->position - contact.normal * (circle->radius - contact.depth);
+		}
+		else
+		{
+			if (circle->radius < distance)
+			{
+				return false;
+			}
+			contact.depth = circle->radius - distance;
+			contact.normal = edge.Normal();
+			contact.start = b->position - (contact.normal * circle->radius);
+			contact.end = b->position - (contact.normal * (circle->radius - contact.depth));
+		}
+	}
+	else
+	{
+			contact.depth = distanceI;
+			contact.normal = polygon->GetEdge(indexI).Normal();
+			contact.start = b->position - (contact.normal * circle->radius);
+			contact.end = contact.start + contact.normal * (circle->radius + contact.depth);
+	}
+
+	contact.a = a;
+	contact.b = b;
+
+	return true;
 }
 
 bool Collision::CircleToCircle(Body *a, Body *b, Contact &contact)
@@ -56,7 +153,7 @@ bool Collision::CircleToCircle(Body *a, Body *b, Contact &contact)
 
 bool Collision::PolygonToPylygon(Body *a, Body *b, Contact &contact)
 {
-	
+
 	Polygon *pa = static_cast<Polygon *>(a->shape);
 	Polygon *pb = static_cast<Polygon *>(b->shape);
 
