@@ -2,7 +2,7 @@
 
 #include "SDL2/SDL.h"
 #include "graphics.h"
-#include "body.h"
+#include "world.h"
 
 class App
 {
@@ -12,8 +12,8 @@ private:
 	Uint32 backgroundColor;
 	Uint32 drawColor;
 	Uint32 collisionColor;
-	std::vector<Body *> bodies;
 	Vec2 pushForce;
+	World *world;
 
 public:
 	App();
