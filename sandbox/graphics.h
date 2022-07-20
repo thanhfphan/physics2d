@@ -2,9 +2,9 @@
 
 #include "SDL2/SDL.h"
 #include "SDL2/SDL2_gfxPrimitives.h"
-#include "vec2.h"
+#include "../src/vec2.h"
 #include "vector"
-#include "body.h"
+#include "../src/body.h"
 
 class Graphics
 {

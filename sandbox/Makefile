@@ -1,7 +1,7 @@
 CC = g++
 LANG_STD= -std=c++11
 COMPILER_FLAGS = -Wall
-SRC_FILES = *.cpp
+SRC_FILES = *.cpp ../src/*.cpp
 INCLUDE_PATH = -I/opt/homebrew/include
 #INCLUDE_PATH = `sdl2-config --cflags --libs`
 LINKER_FLAGS = -L/opt/homebrew/lib -lSDL2 -lSDL2_gfx -lm

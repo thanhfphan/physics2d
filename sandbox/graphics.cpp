@@ -1,6 +1,6 @@
 #include "graphics.h"
-#include "TK/Log.h"
-#include "shape.h"
+#include "../src/shape.h"
+#include "../src/TK/Log.h"
 
 Graphics::Graphics() {}
 Graphics::~Graphics() {}

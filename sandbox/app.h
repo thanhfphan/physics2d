@@ -2,7 +2,7 @@
 
 #include "SDL2/SDL.h"
 #include "graphics.h"
-#include "world.h"
+#include "../src/world.h"
 
 class App
 {

@@ -2,9 +2,9 @@
 #include "app.h"
 #include "graphics.h"
 #include "SDL2/SDL.h"
-#include "collision.h"
-#include "const.h"
-#include "TK/Log.h"
+#include "../src/collision.h"
+#include "../src/const.h"
+#include "../src/TK/Log.h"
 
 App::App()
 {
