@@ -62,13 +62,19 @@ void App::ProcessInput()
 		{
 			int mouseX, mouseY;
 			SDL_GetMouseState(&mouseX, &mouseY);
-			// std::vector<Vec2> vericesBox = {Vec2(-20, 20), Vec2(-20, -20), Vec2(20, -20), Vec2(20, 20)};
-			// Polygon *sbox = new Polygon(vericesBox);
-			// Body *box = new Body(sbox, mouseX, mouseY, 1);
-			// bodies.push_back(box);
-			Circle *c = new Circle(30);
-			Body *b = new Body(c, mouseX, mouseY, 1);
-			world->CreateBody(b);
+			if (event.button.button == SDL_BUTTON_LEFT)
+			{
+				Circle *c = new Circle(30);
+				Body *b = new Body(c, mouseX, mouseY, 1);
+				world->CreateBody(b);
+			}
+			else
+			{
+				std::vector<Vec2> vericesBox = {Vec2(-30, 30), Vec2(-30, -30), Vec2(30, -30), Vec2(30, 30)};
+				Polygon *sbox = new Polygon(vericesBox);
+				Body *box = new Body(sbox, mouseX, mouseY, 1);
+				world->CreateBody(box);
+			}
 			break;
 		}
 		case SDL_MOUSEBUTTONDOWN:
@@ -105,24 +111,6 @@ void App::Update()
 	// End - Time per frame
 
 	world->Step(deltaTime);
-
-	std::vector<Body *> bodies = world->GetBodies();
-	for (size_t i = 0; i < bodies.size() - 1; i++)
-	{
-		for (size_t j = i + 1; j < bodies.size(); j++)
-		{
-			Contact contact;
-			Body *a = bodies[i];
-			Body *b = bodies[j];
-			if (Collision::IsColliding(a, b, contact))
-			{
-				contact.ResolveCollision();
-				graphics.DrawFilledCircle(contact.start.x, contact.start.y, 5, collisionColor);
-				graphics.DrawFilledCircle(contact.end.x, contact.end.y, 5, collisionColor);
-				graphics.DrawLine(contact.start.x, contact.start.y, contact.start.x + contact.normal.x * 15, contact.start.y + contact.normal.y * 15, 0xFFFF00FF);
-			}
-		}
-	}
 }
 
 void App::Render()
